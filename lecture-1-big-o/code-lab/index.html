@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code Lab · Big-O Notation</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#f4f6f9; --grid:#dce3ee; --ink:#1b2230; --muted:#5b6577; --blue:#2552c9; --green:#13795b; --sticky:#ffe76a; --red:#b3261e; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; color: var(--ink); font-size: 18px; line-height: 1.55;
+    background: var(--paper) linear-gradient(var(--grid) 1px, transparent 1px) -1px -1px / 40px 40px,
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px) -1px -1px / 40px 40px; }
+  main { max-width: 900px; margin: 0 auto; padding: 48px 28px 80px; }
+  .back { color: var(--blue); font-weight: 700; }
+  h1 { font: 800 clamp(40px, 6vw, 64px)/0.98 'Bricolage Grotesque', sans-serif; letter-spacing: -0.03em; margin: 18px 0 14px; }
+  .lede { color: var(--muted); font-size: 20px; margin: 0 0 28px; max-width: 62ch; }
+  h2 { font: 800 28px/1.15 'Bricolage Grotesque', sans-serif; margin: 0 0 10px; }
+  h3 { font: 800 21px 'Bricolage Grotesque', sans-serif; margin: 26px 0 6px; }
+  section { background: #fff; border: 2px solid var(--ink); border-radius: 4px; padding: 28px; margin-bottom: 28px; }
+  section > p { margin: 0 0 14px; }
+  .choose { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .choose a { display: block; background: #fff; border: 2px solid var(--grid); border-radius: 4px; padding: 16px 18px; color: var(--ink); text-decoration: none; }
+  .choose a:hover, .choose a:focus-visible { border-color: var(--blue); }
+  .choose b { display: block; color: var(--blue); font-size: 20px; }
+  .choose span { color: var(--muted); font-size: 16px; }
+  @media (max-width: 700px) { .choose { grid-template-columns: 1fr; } }
+  ol.steps { padding-left: 1.4em; margin: 0 0 8px; }
+  ol.steps > li { margin-bottom: 14px; }
+  ol.steps > li::marker { font-weight: 700; color: var(--blue); }
+  code { font-size: 0.9em; background: #e8ecf3; padding: 1px 5px; border-radius: 3px; }
+  .cmdwrap { position: relative; margin: 8px 0 6px; }
+  pre.cmd { background: var(--ink); color: #fff; padding: 16px 18px; padding-right: 90px; border-radius: 4px; overflow-x: auto; margin: 0; font-size: 15px; }
+  pre.cmd code { background: none; padding: 0; }
+  pre.json { max-height: 420px; }
+  pre.pic { background: #fff; border: 2px solid var(--grid); border-radius: 4px; padding: 14px 18px; overflow-x: auto; font-size: 15px; margin: 8px 0 14px; }
+  .copy { position: absolute; top: 10px; right: 10px; font: 700 14px 'Atkinson Hyperlegible'; padding: 6px 12px; border-radius: 4px; border: 0; background: var(--sticky); color: var(--ink); cursor: pointer; }
+  .note { margin: 10px 0 0; padding: 14px 18px; background: var(--sticky); transform: rotate(-0.4deg); }
+  .req { border: 2px solid var(--grid); border-radius: 4px; padding: 16px 18px; margin: 14px 0; }
+  .req h3 { margin: 0 0 8px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .method { font: 700 15px 'Atkinson Hyperlegible'; color: #fff; background: var(--blue); padding: 2px 8px; border-radius: 3px; }
+  .method.post { background: var(--green); }
+  .req dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 0; }
+  .req dt { font-weight: 700; color: var(--muted); }
+  .req dd { margin: 0; overflow-wrap: anywhere; }
+  .expect { color: var(--green); font-weight: 700; }
+  .bad { color: var(--red); font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  th { font-size: 15px; color: var(--muted); }
+  .dl { display: inline-block; background: var(--sticky); color: var(--ink); font-weight: 700; text-decoration: none; padding: 12px 18px; border-radius: 4px; margin: 4px 0 10px; }
+  details { margin-top: 10px; } summary { cursor: pointer; font-weight: 700; color: var(--blue); }
+  a { color: var(--blue); }
+  a:focus-visible, summary:focus-visible, .copy:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+
+  pre.see { background: #fff; border: 2px solid var(--grid); border-left: 8px solid var(--green); border-radius: 4px; padding: 12px 16px; overflow-x: auto; font-size: 15px; margin: 6px 0 12px; }
+  pre.see .e { color: var(--red); white-space: pre-wrap; }
+  .label { font-weight: 700; color: var(--green); font-size: 15px; margin-top: 6px; }
+  .os { display: grid; grid-template-columns: 1fr; gap: 0 20px; }
+  .os h4 { margin: 6px 0 2px; font-size: 16px; }
+  @media (max-width: 700px) { .os { grid-template-columns: 1fr; } }
+  section h2 .n { color: var(--blue); }
+  td code { overflow-wrap: anywhere; }
+  .os > div, ol.steps > li { min-width: 0; }
+  @media (max-width: 700px) { table { display: block; overflow-x: auto; } section { padding: 18px; } }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../../">← Big-O home</a>
+  <h1>Code Lab: count the steps</h1>
+  <p class="lede">Type along with the lecture. Each file counts how many steps an algorithm takes for 10, 100 and 1,000 items, and the output shows what real Python 3 prints. Watch how the numbers grow: that growth is the Big-O.</p>
+
+  <div class="choose">
+    <a href="#s1"><b>In class</b><span>Sections 1–4 follow the slides.</span></a>
+    <a href="#breaks"><b>Something broke?</b><span>Jump to the table at the bottom.</span></a>
+  </div>
+
+  <section>
+    <h2>Before you start</h2>
+    <ol class="steps">
+      <li>Check Python:
+        <div class="cmdwrap"><pre class="cmd"><code>python3 --version</code></pre><button type="button" class="copy">Copy</button></div>
+        Any Python 3 works. On Windows the command may be <code>python</code>.</li>
+      <li>A folder for today, opened in VS Code:
+        <div class="cmdwrap"><pre class="cmd"><code>mkdir big-o
+cd big-o
+code .</code></pre><button type="button" class="copy">Copy</button></div></li>
+      <li><b>Save</b> (Ctrl+S / Cmd+S) before every run.</li>
+    </ol>
+  </section>
+
+  <section id="s1">
+    <h2><span class="n">1 ·</span> Count the steps: O(1) and O(n)</h2>
+    <p>New file: <code>growth.py</code>. Type each block yourself (copy only if you fall behind), leave a blank line between blocks, <b>save</b>, then run.</p>
+    <p class="label">Step 1 · growth.py</p>
+    <div class="cmdwrap"><pre class="cmd"><code>def get_first(items):
+    return items[0]</code></pre><button type="button" class="copy">Copy</button></div>
+    <p class="label">Step 2 · growth.py</p>
+    <div class="cmdwrap"><pre class="cmd"><code>def linear_search(items, target):
+    steps = 0
+    for item in items:
+        steps += 1
+        if item == target:
+            return steps
+    return steps</code></pre><button type="button" class="copy">Copy</button></div>
+    <p class="label">Step 3 · growth.py</p>
+    <div class="cmdwrap"><pre class="cmd"><code>for n in [10, 100, 1000]:
+    items = list(range(n))
+    print(n, linear_search(items, n))</code></pre><button type="button" class="copy">Copy</button></div>
+    <p>Run it:</p>
+    <div class="cmdwrap"><pre class="cmd"><code>python3 growth.py</code></pre><button type="button" class="copy">Copy</button></div>
+<pre class="see">10 10
+100 100
+1000 1000</pre>
+
+  <section id="s2">
+    <h2><span class="n">2 ·</span> A loop inside a loop: O(n²)</h2>
+    <p>New file: <code>pairs.py</code>. Type each block yourself (copy only if you fall behind), leave a blank line between blocks, <b>save</b>, then run.</p>
+    <p class="label">Step 1 · pairs.py</p>
+    <div class="cmdwrap"><pre class="cmd"><code>def count_pairs(items):
+    steps = 0
+    for a in items:
+        for b in items:
+            steps += 1
+    return steps</code></pre><button type="button" class="copy">Copy</button></div>
+    <p class="label">Step 2 · pairs.py</p>
+    <div class="cmdwrap"><pre class="cmd"><code>for n in [10, 100, 1000]:
+    items = list(range(n))
+    print(n, count_pairs(items))</code></pre><button type="button" class="copy">Copy</button></div>
+    <p>Run it:</p>
+    <div class="cmdwrap"><pre class="cmd"><code>python3 pairs.py</code></pre><button type="button" class="copy">Copy</button></div>
+<pre class="see">10 100
+100 10000
+1000 1000000</pre>
+
+  <section id="s3">
+    <h2><span class="n">3 ·</span> Cut it in half every time: O(log n)</h2>
+    <p>New file: <code>halving.py</code>. Type each block yourself (copy only if you fall behind), leave a blank line between blocks, <b>save</b>, then run.</p>
+    <p class="label">Step 1 · halving.py</p>
+    <div class="cmdwrap"><pre class="cmd"><code>def binary_search(items, target):
+    steps = 0
+    left, right = 0, len(items) - 1
+    while left &lt;= right:
+        steps += 1
+        mid = (left + right) // 2
+        if items[mid] == target:
+            return steps
+        elif target &lt; items[mid]:
+            right = mid - 1
+        else:
+            left = mid + 1
+    return steps</code></pre><button type="button" class="copy">Copy</button></div>
+    <p class="label">Step 2 · halving.py</p>
+    <div class="cmdwrap"><pre class="cmd"><code>for n in [10, 100, 1000, 1000000]:
+    items = list(range(n))
+    print(n, binary_search(items, n))</code></pre><button type="button" class="copy">Copy</button></div>
+    <p>Run it:</p>
+    <div class="cmdwrap"><pre class="cmd"><code>python3 halving.py</code></pre><button type="button" class="copy">Copy</button></div>
+<pre class="see">10 4
+100 7
+1000 10
+1000000 20</pre>
+
+  <section id="s4">
+    <h2><span class="n">4 ·</span> Branching: O(2ⁿ), and every ordering: O(n!)</h2>
+    <p>New file: <code>branching.py</code>. Type each block yourself (copy only if you fall behind), leave a blank line between blocks, <b>save</b>, then run.</p>
+    <p class="label">Step 1 · branching.py</p>
+    <div class="cmdwrap"><pre class="cmd"><code>import math
+
+calls = 0
+
+
+def fib(n):
+    global calls
+    calls += 1
+    if n &lt;= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)</code></pre><button type="button" class="copy">Copy</button></div>
+    <p class="label">Step 2 · branching.py</p>
+    <div class="cmdwrap"><pre class="cmd"><code>for n in [10, 20, 25]:
+    calls = 0
+    fib(n)
+    print(n, calls)</code></pre><button type="button" class="copy">Copy</button></div>
+    <p class="label">Step 3 · branching.py</p>
+    <div class="cmdwrap"><pre class="cmd"><code>for n in [3, 5, 10]:
+    print(n, math.factorial(n))</code></pre><button type="button" class="copy">Copy</button></div>
+    <p>Run it:</p>
+    <div class="cmdwrap"><pre class="cmd"><code>python3 branching.py</code></pre><button type="button" class="copy">Copy</button></div>
+<pre class="see">10 177
+20 21891
+25 242785
+3 6
+5 120
+10 3628800</pre>
+
+  <section id="breaks">
+    <h2>When something breaks</h2>
+    <table>
+      <tr><th>You see</th><th>It means</th><th>Fix</th></tr>
+      <tr><td><code>python3: command not found</code></td><td>Python isn't installed, or it's called <code>python</code> on your laptop</td><td>Try <code>python growth.py</code>; or install Python 3</td></tr>
+      <tr><td><code>can't open file … growth.py</code></td><td>You're in a different folder</td><td><code>cd big-o</code>, then run again</td></tr>
+      <tr><td><code>IndentationError</code></td><td>The spaces at the start of a line don't line up</td><td>4 spaces per level; the <code>return</code> lines sit under <code>for</code> or <code>if</code> like the block above</td></tr>
+      <tr><td>Nothing prints</td><td>The <code>for n in …</code> block is missing, or indented inside the function</td><td>It starts at the very left edge, not under <code>def</code></td></tr>
+      <tr><td><code>10 1</code> instead of <code>10 10</code></td><td>You searched for something that is in the list (best case)</td><td>Search for <code>n</code>: <code>range(n)</code> stops at n − 1, so n is never there</td></tr>
+      <tr><td>It runs for ages</td><td>A big <code>n</code> with <code>fib</code> (fib(40) is over 300 million calls)</td><td>Ctrl+C stops it. That is O(2ⁿ) in real life</td></tr>
+      <tr><td>The output didn't change after your edit</td><td>The file isn't saved</td><td>A dot on the tab = unsaved. Ctrl+S, run again</td></tr>
+    </table>
+  </section>
+
+</main>
+<script>
+  document.querySelectorAll('.copy').forEach((b) => b.onclick = async () => {
+    await navigator.clipboard.writeText(b.previousElementSibling.innerText.trim()); b.textContent = 'Copied'; setTimeout(() => (b.textContent = 'Copy'), 1500)
+  })
+</script>
+</body>
+</html>

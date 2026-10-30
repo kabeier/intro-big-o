@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Big-O Growth Chart</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/bigo-chart.css?v=2">
+<style>
+  :root { --paper:#f4f6f9; --grid:#dce3ee; --ink:#1b2230; --muted:#5b6577; --blue:#2552c9; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; color: var(--ink); font-size: 18px; line-height: 1.5;
+    background: var(--paper) linear-gradient(var(--grid) 1px, transparent 1px) -1px -1px / 40px 40px,
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px) -1px -1px / 40px 40px; }
+  main { max-width: 1240px; margin: 0 auto; padding: 36px 28px 70px; }
+  .back { color: var(--blue); font-weight: 700; }
+  h1 { font: 800 clamp(36px, 6vw, 60px)/1 'Bricolage Grotesque', sans-serif; letter-spacing: -0.03em; margin: 14px 0 10px; }
+  .lede { max-width: 66ch; color: var(--muted); font-size: 20px; margin: 0 0 22px; }
+  section { background: #fff; border: 2px solid var(--ink); border-radius: 4px; padding: 22px 24px; margin-bottom: 24px; }
+  h2 { font: 800 26px 'Bricolage Grotesque', sans-serif; margin: 0 0 10px; }
+  ul { margin: 0; padding-left: 1.2em; } li { margin-bottom: 6px; }
+  code { font: 600 .92em 'JetBrains Mono', monospace; background: #e8ecf3; padding: 1px 5px; border-radius: 3px; }
+  .try { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 0; }
+  .try button { font: 700 16px 'JetBrains Mono', monospace; padding: 6px 12px; border: 2px solid var(--ink); border-radius: 6px; background: #fff; cursor: pointer; }
+  .src { font-size: 15px; color: var(--muted); margin-top: 10px; }
+  @media (max-width: 600px) { main { padding: 24px 16px 60px; } section { padding: 16px 14px; } }
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="../../">← Big-O lecture</a>
+  <h1>How fast does the work grow?</h1>
+  <p class="lede">Move the slider, or type any <code>n</code>. The table shows how many operations each Big-O needs for <code>n</code> items. Nothing leaves the page.</p>
+
+  <section>
+    <div id="chart"></div>
+    <p class="try">Try: <button type="button" data-n="10">10</button><button type="button" data-n="100">100</button><button type="button" data-n="1000">1,000</button><button type="button" data-n="1000000">1,000,000</button></p>
+    <p class="src">The chart follows the curriculum's Big-O chart (from bigocheatsheet.com). Its height stops at 600 operations, so the fast-growing curves leave the top early.</p>
+  </section>
+
+  <section>
+    <h2>What to notice</h2>
+    <ul>
+      <li><b>n = 10</b>: everything looks fine. Even <code>O(n!)</code> is only 3,628,800 operations, which a laptop does in under a second.</li>
+      <li><b>n = 1,000</b>: <code>O(n)</code> is 1,000, <code>O(n²)</code> is 1,000,000, and <code>O(2ⁿ)</code> is a number with 302 digits.</li>
+      <li><b>n = 1,000,000</b>: <code>O(log n)</code> is still about 20. That is binary search: 20 looks to find anything in a million sorted items.</li>
+      <li>Big-O is about the <b>shape</b> of the curve, not the seconds. A faster computer moves every curve a little; it never turns <code>O(n²)</code> into <code>O(n)</code>.</li>
+    </ul>
+  </section>
+</main>
+<script src="../../shared/bigo-chart.js?v=2"></script>
+<script>
+  const chart = BigOChart(document.getElementById('chart'), { n: 10 })
+  document.querySelectorAll('.try button').forEach((b) => b.onclick = () => {
+    document.querySelector('.bo-type input').value = b.dataset.n
+    chart.show(b.dataset.n, false)
+  })
+</script>
+</body>
+</html>

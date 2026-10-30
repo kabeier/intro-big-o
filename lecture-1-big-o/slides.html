@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Big-O Notation</title>
+<link rel="stylesheet" href="../shared/deck.css">
+<link rel="stylesheet" href="../shared/codepad.css?v=4">
+<link rel="stylesheet" href="../shared/bigo-chart.css?v=2">
+<style>
+  .race { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 8px; }
+  .race .card h3 { font-size: 30px; }
+  .race .big { font: 800 84px/1 'Bricolage Grotesque', Inter, sans-serif; margin: 10px 0 6px; }
+  .race p { font-size: 24px; margin: 0; }
+  .slide .bo { gap: 30px; }
+  .slide .bo-table { font-size: 20px; }
+  .slide .bo-table td:first-child { font-size: 21px; }
+  .slide .bo-v { font-size: 22px; }
+  .halve { font: 600 30px/1.5 'JetBrains Mono', monospace; }
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 26px; }
+  .rules .card { padding: 16px 20px; }
+  .rules .card h3 { font-size: 24px; margin: 0 0 6px; }
+  .rules pre { font-size: 18px; padding: 10px 14px; margin: 0 0 6px; }
+  .rules p { font-size: 20px; margin: 0; }
+  .two pre { font-size: 21px; }
+  .docs { display: flex; flex-direction: column; gap: 10px; }
+  .docs-tabs { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .docs-tabs button { font: 600 19px/1 Inter, system-ui, sans-serif; padding: 9px 14px; border-radius: 8px; border: 2px solid #1b2230; background: #fff; color: #1b2230; cursor: pointer; }
+  .docs-tabs button.on { background: #1b2230; color: #fff; }
+  .docs-tabs a { margin-left: auto; font: 600 18px Inter, system-ui, sans-serif; color: #2552c9; }
+  .docs iframe { width: 100%; height: 560px; border: 2px solid #1b2230; border-radius: 10px; background: #fff; }
+  .docs .url { font: 500 17px 'JetBrains Mono', monospace; color: #5b6577; }
+</style>
+</head>
+<body data-minutes="40">
+<div class="stage">
+
+<!-- ============ OPEN (0–5) ============ -->
+<section class="slide title" data-seg="Open" data-at="0">
+  <div class="kicker">Data Structures &amp; Algorithms · Understanding Big-O</div>
+  <h1>What happens when the list gets big?</h1>
+  <p class="sub">Big-O describes how the work (and the memory) <b>grows</b> as the input grows. We count it, live, in Python.</p>
+  <aside class="notes">
+    <p><b>Before class</b> (demo-kit/RUNBOOK.md): this deck open in <b>Chrome</b> with internet (the editor and Python load once). In your own terminal: <code>python3 --version</code>.</p>
+    <p>Press <b>T</b>. Students: open VS Code and a terminal, <code>mkdir big-o</code>, <code>cd big-o</code>, <code>code .</code></p>
+    <p><b>The code slides are a real editor.</b> Type live (each slide's notes have <b>TYPE THIS</b>), <b>Ctrl+S</b> saves, then click the terminal and type the command. <b>Backup:</b> <b>N</b> types the next chunk, <b>R</b> runs it.</p>
+  </aside>
+</section>
+
+<section class="slide statement" data-seg="Open" data-at="1">
+  <h2>Find one number in 1,000,000</h2>
+  <div class="race">
+    <div class="card red"><h3>Linear search</h3><div class="big">1,000,000</div><p>looks, if the number is last or missing</p></div>
+    <div class="card green"><h3>Binary search (sorted list)</h3><div class="big">20</div><p>looks, because every look cuts the list in half</p></div>
+  </div>
+  <p class="bottomline">Both are correct. Only one still works when the data gets big.</p>
+  <aside class="notes">
+    <p>Say: "In the binary search lecture you wrote both of these. Today we put a <b>name</b> on the difference."</p>
+    <p>Ask chat: "If the list doubles to 2,000,000, how many looks for each?" → linear <b>2,000,000</b>, binary <b>21</b>. That question is Big-O.</p>
+  </aside>
+</section>
+
+<section class="slide" data-seg="What is Big-O?" data-at="3">
+  <h2>Big-O measures growth, not seconds</h2>
+  <ul>
+    <li><b>Time complexity</b>: as the input grows, how much more <b>work</b>?</li>
+    <li><b>Space complexity</b>: as the input grows, how much more <b>extra memory</b>?</li>
+    <li><b>n</b> = the size of the input (how many items)</li>
+    <li>We plan for the <b>worst case</b>: the item is last, or not there</li>
+    <li>Same answer on any laptop, in any language</li>
+  </ul>
+  <p class="bottomline">The question: "If my input doubles, how much more work?"</p>
+  <aside class="notes">
+    <p>Say: "Big-O does not say 3 seconds. A fast laptop and a slow laptop give different seconds. Big-O describes the <b>shape</b>: double the input, what happens to the work?"</p>
+    <table style="border-collapse:collapse;margin:8px 0">
+      <tr><th style="padding:4px 16px;border-bottom:1px solid #34405a" align="left">input doubles…</th><th style="padding:4px 16px;border-bottom:1px solid #34405a" align="left">work…</th><th style="padding:4px 16px;border-bottom:1px solid #34405a" align="left">Big-O</th></tr>
+      <tr><td style="padding:4px 16px;border-bottom:1px solid #34405a">10 → 20</td><td style="padding:4px 16px;border-bottom:1px solid #34405a">stays the same</td><td style="padding:4px 16px;border-bottom:1px solid #34405a"><b>O(1)</b></td></tr>
+      <tr><td style="padding:4px 16px;border-bottom:1px solid #34405a">10 → 20</td><td style="padding:4px 16px;border-bottom:1px solid #34405a">goes up by one step</td><td style="padding:4px 16px;border-bottom:1px solid #34405a"><b>O(log n)</b></td></tr>
+      <tr><td style="padding:4px 16px;border-bottom:1px solid #34405a">10 → 20</td><td style="padding:4px 16px;border-bottom:1px solid #34405a">doubles</td><td style="padding:4px 16px;border-bottom:1px solid #34405a"><b>O(n)</b></td></tr>
+      <tr><td style="padding:4px 16px;border-bottom:1px solid #34405a">10 → 20</td><td style="padding:4px 16px;border-bottom:1px solid #34405a">four times</td><td style="padding:4px 16px;border-bottom:1px solid #34405a"><b>O(n²)</b></td></tr>
+    </table>
+  </aside>
+</section>
+
+<section class="slide" data-seg="What is Big-O?" data-at="5">
+  <h2>The Big-O chart: drag n</h2>
+  <div id="slide-chart"></div>
+  <aside class="notes">
+    <p><b>** LIVE, about 2 minutes. **</b> The curriculum's chart, redrawn so you can move it. Drag the slider, or type in the box.</p>
+    <ul>
+      <li>Start at <b>n = 10</b>: "Everything looks fine at 10."</li>
+      <li>Type <b>1000</b>: "O(n) is 1,000. O(n²) is a <b>million</b>. O(2ⁿ) is a number with 302 digits."</li>
+      <li>Type <b>1000000</b>: "O(log n) is still about <b>20</b>. That's binary search."</li>
+      <li>Point at the colours: green = great, red = only for tiny inputs.</li>
+    </ul>
+    <p>Students can open it themselves: the class site → <b>Growth chart</b>.</p>
+    <p><b>Keys:</b> after you click the slider or the box, the arrow keys change n. Click outside the chart (or use the presenter's Next) to move on.</p>
+  </aside>
+</section>
+
+<!-- ============ COUNT IT (7–18) ============ -->
+<section class="slide pad" data-seg="Code along: O(1) and O(n)" data-at="7">
+  <h2>Count the steps: O(1) and O(n) <span class="say">growth.py</span></h2>
+  <div class="vscode" data-folder="big-o" data-terminal="one" data-term-lines="7" data-run="python3 growth.py">
+<script type="text/plain" data-file="growth.py" data-step>def get_first(items):
+    return items[0]</script>
+<script type="text/plain" data-file="growth.py" data-step>def linear_search(items, target):
+    steps = 0
+    for item in items:
+        steps += 1
+        if item == target:
+            return steps
+    return steps</script>
+<script type="text/plain" data-file="growth.py" data-step>for n in [10, 100, 1000]:
+    items = list(range(n))
+    print(n, linear_search(items, n))</script>
+  </div>
+  <aside class="notes">
+    <p><b>** CODE ALONG, about 5 minutes. **</b> Students: a new file <code>growth.py</code>.</p>
+    <div class="typecode"><p class="th">TYPE THIS, in order</p>
+    <p class="tf"><b>growth.py</b> · part 1</p>
+    <pre>def get_first(items):
+    return items[0]</pre>
+    <p class="tf"><b>growth.py</b> · part 2 (leave one blank line, two in a real file)</p>
+    <pre>def linear_search(items, target):
+    steps = 0
+    for item in items:
+        steps += 1
+        if item == target:
+            return steps
+    return steps</pre>
+    <p class="tf"><b>growth.py</b> · part 3</p>
+    <pre>for n in [10, 100, 1000]:
+    items = list(range(n))
+    print(n, linear_search(items, n))</pre>
+    <p class="tf"><b>Ctrl+S</b>, then in the terminal:</p><pre>python3 growth.py</pre>
+    </div>
+    <ul>
+      <li><b>get_first</b>: one lookup, whether the list has 10 items or 10 million → <b>O(1)</b>.</li>
+      <li><code>steps</code> is our <b>counter</b>: +1 every time the loop looks at an item.</li>
+      <li>Say: "<code>range(n)</code> stops at n − 1, so <b>n is never in the list</b>. That is the worst case: we look at everything."</li>
+      <li>Output: <code>10 10</code>, <code>100 100</code>, <code>1000 1000</code>. Steps = n → <b>O(n)</b>.</li>
+      <li>Ask: "Change the target to 0. How many steps?" → always <b>1</b> (best case). "Big-O plans for the worst case."</li>
+    </ul>
+  </aside>
+</section>
+
+<section class="slide pad" data-seg="Code along: O(n²)" data-at="12">
+  <h2>A loop inside a loop: O(n²) <span class="say">pairs.py</span></h2>
+  <div class="vscode" data-folder="big-o" data-terminal="one" data-term-lines="7" data-run="python3 pairs.py">
+<script type="text/plain" data-file="pairs.py" data-step>def count_pairs(items):
+    steps = 0
+    for a in items:
+        for b in items:
+            steps += 1
+    return steps</script>
+<script type="text/plain" data-file="pairs.py" data-step>for n in [10, 100, 1000]:
+    items = list(range(n))
+    print(n, count_pairs(items))</script>
+  </div>
+  <aside class="notes">
+    <p><b>** CODE ALONG, about 3 minutes. **</b> New file <code>pairs.py</code>.</p>
+    <div class="typecode"><p class="th">TYPE THIS, in order</p>
+    <p class="tf"><b>pairs.py</b> · part 1</p>
+    <pre>def count_pairs(items):
+    steps = 0
+    for a in items:
+        for b in items:
+            steps += 1
+    return steps</pre>
+    <p class="tf"><b>pairs.py</b> · part 2</p>
+    <pre>for n in [10, 100, 1000]:
+    items = list(range(n))
+    print(n, count_pairs(items))</pre>
+    <p class="tf"><b>Ctrl+S</b>, then:</p><pre>python3 pairs.py</pre>
+    </div>
+    <ul>
+      <li>Output: <code>10 100</code>, <code>100 10000</code>, <code>1000 1000000</code>.</li>
+      <li>Say: "For <b>every</b> item, we loop over <b>every</b> item again: n × n = <b>n²</b>."</li>
+      <li>Ask: "10 times more items: how much more work?" → <b>100 times</b>.</li>
+    </ul>
+  </aside>
+</section>
+
+<section class="slide pad" data-seg="Code along: O(log n)" data-at="15">
+  <h2>Cut it in half every time: O(log n) <span class="say">halving.py</span></h2>
+  <div class="vscode" data-folder="big-o" data-terminal="one" data-term-lines="8" data-run="python3 halving.py">
+<script type="text/plain" data-file="halving.py" data-step>def binary_search(items, target):
+    steps = 0
+    left, right = 0, len(items) - 1
+    while left <= right:
+        steps += 1
+        mid = (left + right) // 2
+        if items[mid] == target:
+            return steps
+        elif target < items[mid]:
+            right = mid - 1
+        else:
+            left = mid + 1
+    return steps</script>
+<script type="text/plain" data-file="halving.py" data-step>for n in [10, 100, 1000, 1000000]:
+    items = list(range(n))
+    print(n, binary_search(items, n))</script>
+  </div>
+  <aside class="notes">
+    <p><b>** CODE ALONG, about 3 minutes. **</b> New file <code>halving.py</code>. The binary search from the binary search lecture, plus a counter.</p>
+    <div class="typecode"><p class="th">TYPE THIS, in order</p>
+    <p class="tf"><b>halving.py</b> · part 1</p>
+    <pre>def binary_search(items, target):
+    steps = 0
+    left, right = 0, len(items) - 1
+    while left &lt;= right:
+        steps += 1
+        mid = (left + right) // 2
+        if items[mid] == target:
+            return steps
+        elif target &lt; items[mid]:
+            right = mid - 1
+        else:
+            left = mid + 1
+    return steps</pre>
+    <p class="tf"><b>halving.py</b> · part 2</p>
+    <pre>for n in [10, 100, 1000, 1000000]:
+    items = list(range(n))
+    print(n, binary_search(items, n))</pre>
+    <p class="tf"><b>Ctrl+S</b>, then:</p><pre>python3 halving.py</pre>
+    </div>
+    <ul>
+      <li>Output: <code>10 4</code>, <code>100 7</code>, <code>1000 10</code>, <code>1000000 20</code>.</li>
+      <li>Say: "1,000 times more items, and only <b>10 more steps</b>. Each step throws away half."</li>
+      <li><code>//</code> = whole-number division (rounds down). <code>range(n)</code> is already sorted.</li>
+    </ul>
+  </aside>
+</section>
+
+<section class="slide" data-seg="Logarithms" data-at="18">
+  <h2>log n = how many times you can halve n</h2>
+  <div class="cols" style="align-items:start">
+    <div class="halve">8 → 4 → 2 → 1<br><span class="muted" style="font-size:26px">3 halvings: log₂ 8 = 3</span></div>
+    <table class="dbt">
+      <tr><th>n</th><th>halvings to reach 1</th></tr>
+      <tr><td>1,000</td><td class="pk">about 10</td></tr>
+      <tr><td>1,000,000</td><td class="pk">about 20</td></tr>
+      <tr><td>1,000,000,000</td><td class="pk">about 30</td></tr>
+    </table>
+  </div>
+  <p class="bottomline">A thousand times more data adds only about 10 steps.</p>
+  <aside class="notes">
+    <p>Say: "A logarithm answers one question: how many times can I cut this in half before I reach 1?"</p>
+    <p>That's why our <code>halving.py</code> said 10 for 1,000 and 20 for a million. It also shows up in <b>space</b>: a recursive function that halves each time stacks about log n calls.</p>
+  </aside>
+</section>
+
+<!-- ============ READING CODE (19–24) ============ -->
+<section class="slide" data-seg="Reading code" data-at="19">
+  <h2>Four rules for reading Big-O from code</h2>
+  <div class="rules">
+    <div class="card blue"><h3>1. Drop the constants</h3><pre>for x in items: ...
+for x in items: ...</pre><p>2n steps → <b>O(n)</b></p></div>
+    <div class="card blue"><h3>2. A fixed loop is O(1)</h3><pre>for x in items:
+    for k in range(3): ...</pre><p>3n steps → <b>O(n)</b></p></div>
+    <div class="card green"><h3>3. Two inputs, two letters</h3><pre>for s in students:
+    for a in assignments: ...</pre><p>n × m → <b>O(n · m)</b></p></div>
+    <div class="card green"><h3>4. Plan for the worst case</h3><pre>for x in items:
+    if x == target: return True</pre><p>Could stop early, but → <b>O(n)</b></p></div>
+  </div>
+  <p class="bottomline">Loops one after another add. Loops inside loops multiply.</p>
+  <aside class="notes">
+    <p><b>About 3 minutes.</b> These four come up in the homework snippets.</p>
+    <table style="border-collapse:collapse;margin:8px 0">
+      <tr><th style="padding:4px 16px;border-bottom:1px solid #34405a" align="left">rule</th><th style="padding:4px 16px;border-bottom:1px solid #34405a" align="left">say</th></tr>
+      <tr><td style="padding:4px 16px;border-bottom:1px solid #34405a;white-space:nowrap">1</td><td style="padding:4px 16px;border-bottom:1px solid #34405a">"Two loops in a row = 2n. Big-O drops the 2: double the input, still double the work."</td></tr>
+      <tr><td style="padding:4px 16px;border-bottom:1px solid #34405a;white-space:nowrap">2</td><td style="padding:4px 16px;border-bottom:1px solid #34405a">"<code>range(3)</code> never grows. Only loops over the <b>input</b> count."</td></tr>
+      <tr><td style="padding:4px 16px;border-bottom:1px solid #34405a;white-space:nowrap">3</td><td style="padding:4px 16px;border-bottom:1px solid #34405a">"Two different lists: give each its own letter. It's only n² when both loops go over the <b>same</b> list."</td></tr>
+      <tr><td style="padding:4px 16px;border-bottom:1px solid #34405a;white-space:nowrap">4</td><td style="padding:4px 16px;border-bottom:1px solid #34405a">"An early <code>return</code> helps when you're lucky. Big-O assumes you're not."</td></tr>
+    </table>
+  </aside>
+</section>
+
+<section class="slide" data-seg="Space" data-at="22">
+  <h2>Space: same loop, different memory</h2>
+  <div class="cols two" style="align-items:start">
+    <div><pre>def linear_search(items, target):
+    for item in items:
+        if item == target:
+            return True
+    return False</pre><p style="font-size:22px;margin-top:8px">Time <b>O(n)</b> · Space <b>O(1)</b>: a few variables, no new list</p></div>
+    <div><pre>def double_values(items):
+    doubled = []
+    for item in items:
+        doubled.append(item * 2)
+    return doubled</pre><p style="font-size:22px;margin-top:8px">Time <b>O(n)</b> · Space <b>O(n)</b>: <code>doubled</code> grows with the input</p></div>
+  </div>
+  <ul class="small" style="margin-top:14px">
+    <li>Count only <b>extra</b> memory: the list you were given doesn't count</li>
+    <li>Look for new lists, dicts, sets, stored pairs, and recursive calls (each waits on the <b>call stack</b>)</li>
+  </ul>
+  <p class="bottomline">Time and space are two separate answers. They often differ.</p>
+  <aside class="notes">
+    <p>Say: "Both loop once, so both are O(n) time. Only the right one builds a list as big as the input."</p>
+    <p>Our <code>count_pairs</code> was O(n²) time but O(1) space: it only kept a counter. If it <b>stored</b> every pair in a list, space would be O(n²) too.</p>
+  </aside>
+</section>
+
+<section class="slide pad" data-seg="Code along: O(2ⁿ), O(n!)" data-at="24">
+  <h2>Branching: O(2ⁿ), and every ordering: O(n!) <span class="say">branching.py</span></h2>
+  <div class="vscode" data-folder="big-o" data-terminal="one" data-term-lines="8" data-run="python3 branching.py">
+<script type="text/plain" data-file="branching.py" data-step>import math
+
+calls = 0
+
+
+def fib(n):
+    global calls
+    calls += 1
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)</script>
+<script type="text/plain" data-file="branching.py" data-step>for n in [10, 20, 25]:
+    calls = 0
+    fib(n)
+    print(n, calls)</script>
+<script type="text/plain" data-file="branching.py" data-step>for n in [3, 5, 10]:
+    print(n, math.factorial(n))</script>
+  </div>
+  <aside class="notes">
+    <p><b>** CODE ALONG, about 4 minutes. **</b> New file <code>branching.py</code>.</p>
+    <div class="typecode"><p class="th">TYPE THIS, in order</p>
+    <p class="tf"><b>branching.py</b> · part 1</p>
+    <pre>import math
+
+calls = 0
+
+
+def fib(n):
+    global calls
+    calls += 1
+    if n &lt;= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)</pre>
+    <p class="tf"><b>branching.py</b> · part 2</p>
+    <pre>for n in [10, 20, 25]:
+    calls = 0
+    fib(n)
+    print(n, calls)</pre>
+    <p class="tf"><b>branching.py</b> · part 3</p>
+    <pre>for n in [3, 5, 10]:
+    print(n, math.factorial(n))</pre>
+    <p class="tf"><b>Ctrl+S</b>, then:</p><pre>python3 branching.py</pre>
+    </div>
+    <ul>
+      <li>Say: "<code>global calls</code> lets the function change the counter outside it."</li>
+      <li>Output: <code>10 177</code>, <code>20 21891</code>, <code>25 242785</code>. Each call makes <b>two</b> more calls → about <b>2ⁿ</b>. Space is only <b>O(n)</b>: the call stack holds one path at a time.</li>
+      <li>Then <code>3 6</code>, <code>5 120</code>, <code>10 3628800</code>: the number of orderings of n items is <b>n!</b> (3 × 2 × 1). Trying every ordering = <b>O(n!)</b>.</li>
+      <li><b>O(n log n)</b> without code: good sorting, like Python's <code>sorted()</code>. Split in half (log n levels), touch every item at each level (n).</li>
+      <li><b>Don't</b> try <code>fib(40)</code> live: over 300 million calls.</li>
+    </ul>
+  </aside>
+</section>
+
+<section class="slide" data-seg="Reading code" data-at="28">
+  <h2>Cheat sheet: what to look for</h2>
+  <table class="dbt small">
+    <tr><th>In the code</th><th>Time</th><th>Usual space</th></tr>
+    <tr><td>Direct access: <code>items[0]</code>, a dict key</td><td class="pk">O(1)</td><td>O(1)</td></tr>
+    <tr><td>A loop that halves</td><td class="pk">O(log n)</td><td>O(1)</td></tr>
+    <tr><td>One loop over the input</td><td class="pk">O(n)</td><td>O(1), or O(n) if it builds a list</td></tr>
+    <tr><td>Halving + touching every item (good sorting)</td><td class="pk">O(n log n)</td><td>depends</td></tr>
+    <tr><td>A loop inside a loop, same input</td><td class="pk">O(n²)</td><td>O(1), or O(n²) if it stores pairs</td></tr>
+    <tr><td>Loops over two different inputs</td><td class="pk">O(n · m)</td><td>depends</td></tr>
+    <tr><td>A function that calls itself twice</td><td class="pk">O(2ⁿ)</td><td>O(n) call stack</td></tr>
+    <tr><td>Every ordering of the items</td><td class="pk">O(n!)</td><td>O(n!) if stored</td></tr>
+  </table>
+  <aside class="notes">
+    <p>Don't read it out. Say: "This is on the class site and in the curriculum. You'll use it for the activity right now."</p>
+  </aside>
+</section>
+
+<!-- ============ ACTIVITY (29–36) ============ -->
+<section class="slide activity" data-seg="Activity: Name that Big-O" data-at="29">
+  <h2>Activity: Name that Big-O</h2>
+  <div class="countdown" data-sec="420"></div>
+  <ol class="steps">
+    <li>A Python function appears</li>
+    <li>In chat on "go": its <b>time</b> Big-O</li>
+    <li>Bonus point: its <b>space</b> Big-O</li>
+  </ol>
+  <p class="muted small" style="margin-top:24px">Page: activity-name-that-big-o/</p>
+  <aside class="notes">
+    <p>About 40 seconds a card; the first 6 are the core set. Space reveals. Every answer's "why" says the space too.</p>
+    <p>Cards 3 and 7 are rules 1 and 2 (drop constants, fixed loop). Card 10: <code>in</code> on a <b>list</b> hides a loop.</p>
+  </aside>
+</section>
+
+<!-- ============ WRAP UP (36–40) ============ -->
+<section class="slide" data-seg="Wrap up" data-at="36">
+  <h2>The docs have the rest</h2>
+  <div class="cols" style="grid-template-columns: 0.75fr 1.5fr; gap:32px">
+    <div>
+      <ul class="small">
+        <li>Every Python operation has a Big-O. The <b>Python wiki</b> lists them</li>
+        <li><code>x in a_list</code> is <b>O(n)</b>; <code>x in a_set</code> is <b>O(1)</b></li>
+        <li>The <b>cheat sheet</b> site is where the chart comes from</li>
+      </ul>
+      <div class="card green" style="margin-top:18px; padding:16px 20px"><p style="font-size:24px; margin:0"><b>Homework:</b> for each snippet, find the loops. In a row, or inside each other? Over the input, or a fixed number?</p></div>
+    </div>
+    <div class="docs">
+      <div class="docs-tabs"><button type="button" data-src="https://wiki.python.org/moin/TimeComplexity" class="on">Python: TimeComplexity</button><button type="button" data-src="https://www.bigocheatsheet.com/">Big-O cheat sheet</button><a href="https://wiki.python.org/moin/TimeComplexity" target="_blank" rel="noopener">Open ↗</a></div>
+      <iframe src="https://wiki.python.org/moin/TimeComplexity" loading="lazy" title="Python wiki: TimeComplexity"></iframe>
+      <div class="url">https://wiki.python.org/moin/TimeComplexity</div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p><b>About 1 minute.</b> Show, don't read: on <b>TimeComplexity</b>, scroll to <b>list</b> and point at <code>x in s</code> → O(n). Scroll to <b>set</b>: <code>x in s</code> → O(1). "That's why we use a set when we look things up a lot."</p>
+    <p>Click <b>Big-O cheat sheet</b>: "the chart we dragged, and the Big-O of common data structures. We'll fill in more of it in future DS lectures."</p>
+    <p>Say: "Nobody memorizes this. Look it up."</p>
+    <p><b>Arrow keys:</b> after you click inside the docs, the arrows scroll the docs. Click the slide <b>outside</b> the docs (or use the presenter's Next) to move on.</p>
+  </aside>
+</section>
+
+<section class="slide" data-seg="Wrap up" data-at="37">
+  <h2>Homework</h2>
+  <p class="small" style="margin-bottom:10px">Top to bottom: each one is a little harder.</p>
+  <ol class="small" style="padding-left:1.2em">
+    <li><b>Algo Big O</b>: for each snippet, write its Big-O and why in <code>answers.md</code></li>
+    <li><b>Big O Notation</b> (Runestone): read the chapter and try its self-checks</li>
+  </ol>
+  <div class="card green" style="margin-top:24px">
+    <h3>Explain it in one sentence</h3>
+    <p class="small">"O(n) because there is one loop over the input." Name the loop, the halving, or the nesting that gives the answer.</p>
+  </div>
+  <aside class="notes">
+    <p>Full steps on the class site (Homework): fork → clone → fill in <code>answers.md</code> → commit and push. <code>explanations.md</code> in the repo has worked examples.</p>
+  </aside>
+</section>
+
+</div>
+<script>
+  // "The docs have the rest": the tab buttons switch the embedded page
+  document.querySelectorAll('.docs').forEach((d) => {
+    const frame = d.querySelector('iframe'), open = d.querySelector('.docs-tabs a'), url = d.querySelector('.url')
+    d.querySelectorAll('.docs-tabs button').forEach((b) => b.onclick = () => {
+      d.querySelectorAll('.docs-tabs button').forEach((x) => x.classList.toggle('on', x === b))
+      frame.src = open.href = url.textContent = b.dataset.src
+      b.blur()
+    })
+  })
+</script>
+<script src="../shared/bigo-chart.js?v=2"></script>
+<script>
+  BigOChart(document.getElementById('slide-chart'), { n: 10 })
+  // Keys typed in the chart's box stay in the box (the deck uses N, R, arrows…)
+  document.getElementById('slide-chart').addEventListener('keydown', (e) => e.stopPropagation())
+</script>
+<script src="../shared/deck.js?v=2"></script>
+<script src="../shared/codepad.js?v=4"></script>
+</body>
+</html>

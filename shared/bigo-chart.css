@@ -1,0 +1,25 @@
+/* Big-O chart (shared/bigo-chart.js): used on the slides and on the growth-chart page. */
+.bo { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 26px; align-items: start; }
+.bo-chart { min-width: 0; }
+.bo-legend { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 6px; }
+.bo-legend span { font: 600 15px 'JetBrains Mono', ui-monospace, monospace; padding: 2px 8px; border: 1px solid #1b2230; border-radius: 3px; color: #1b2230; }
+.bo-svg { width: 100%; height: auto; display: block; background: #fff; }
+.bo-curve { fill: none; stroke: #1b2230; stroke-width: 2.2; }
+.bo-lbl { font: 600 15px Inter, system-ui, sans-serif; fill: #1b2230; }
+.bo-ax { font: italic 600 16px Inter, system-ui, sans-serif; fill: #1b2230; }
+.bo-axis { stroke: #1b2230; stroke-width: 3; }
+.bo-nline { stroke: #2552c9; stroke-width: 3; stroke-dasharray: 6 5; }
+.bo-ntext { font: 700 15px Inter, system-ui, sans-serif; fill: #2552c9; }
+.bo-slider { display: flex; align-items: center; gap: 14px; margin-top: 10px; font: 700 22px 'JetBrains Mono', ui-monospace, monospace; color: #1b2230; }
+.bo-slider b { min-width: 2.2em; }
+.bo-slider input { flex: 1; accent-color: #2552c9; height: 28px; }
+.bo-type { display: block; font: 600 19px Inter, system-ui, sans-serif; margin-bottom: 10px; color: #1b2230; }
+.bo-type input { font: 700 20px 'JetBrains Mono', ui-monospace, monospace; width: 9em; padding: 4px 8px; border: 2px solid #1b2230; border-radius: 6px; margin-left: 6px; }
+.bo-table { border-collapse: collapse; width: 100%; background: #fff; font: 19px Inter, system-ui, sans-serif; }
+.bo-table th, .bo-table td { border: 1px solid #c9d1de; padding: 6px 10px; text-align: left; vertical-align: middle; color: #1b2230; }
+.bo-table th { background: #eef2f8; font-size: 17px; }
+.bo-table td:first-child { font: 700 19px 'JetBrains Mono', ui-monospace, monospace; white-space: nowrap; }
+.bo-table td:first-child i { display: inline-block; width: 12px; height: 12px; border: 1px solid #1b2230; margin-right: 8px; vertical-align: 0; }
+.bo-table td:first-child small { display: block; font: 400 14px Inter, system-ui, sans-serif; color: #5b6577; margin-left: 20px; white-space: normal; }
+.bo-v { font: 700 20px 'JetBrains Mono', ui-monospace, monospace; text-align: right !important; white-space: nowrap; }
+@media (max-width: 800px) { .bo { grid-template-columns: minmax(0, 1fr); } .bo-table, .bo-table td:first-child { font-size: 16px; } .bo-v { font-size: 16px; } .bo-type input { width: 7em; } }

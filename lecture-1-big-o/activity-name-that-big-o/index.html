@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Name that Big-O · Big-O Notation</title>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#f4f6f9; --grid:#dce3ee; --ink:#1b2230; --muted:#5b6577; --blue:#2552c9; --green:#13795b; --red:#c8372d; --sticky:#ffe76a; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; color: var(--ink); display: grid; grid-template-rows: auto auto 1fr auto;
+    background: var(--paper) linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 40px 40px,
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 40px 40px; }
+  header { padding: 20px 36px 0; display: flex; justify-content: space-between; align-items: baseline; gap: 20px; }
+  h1 { font: 800 40px 'Bricolage Grotesque', sans-serif; margin: 0; letter-spacing: -0.02em; }
+  .count { font: 700 20px 'JetBrains Mono', monospace; color: var(--muted); }
+  .bank { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 36px 0; }
+  .bank button { font: 700 22px 'JetBrains Mono', monospace; background: #fff; border: 2px solid var(--ink); border-radius: 6px; padding: 8px 18px; cursor: pointer; color: var(--ink); }
+  .bank button.hit { background: var(--green); border-color: var(--green); color: #fff; }
+  .bank button.miss { background: var(--red); border-color: var(--red); color: #fff; }
+  .bank .legend { align-self: center; font-size: 16px; color: var(--muted); margin-left: 8px; }
+  .stagearea { display: grid; place-items: center; padding: 12px 36px; }
+  .card { width: min(1100px, 100%); background: var(--sticky); padding: 26px 44px; transform: rotate(-1deg);
+    box-shadow: 0 18px 30px -12px rgb(27 34 48 / 0.35); }
+  .who { font: 700 18px 'JetBrains Mono', monospace; margin-bottom: 14px; }
+  .q { font: 700 clamp(26px, 3.2vw, 44px)/1.2 'Bricolage Grotesque', sans-serif; letter-spacing: -0.01em; }
+  .q small { display: block; font: 400 clamp(20px, 2vw, 28px)/1.45 'Atkinson Hyperlegible', sans-serif; margin-top: 18px; }
+  code { font: 600 .9em 'JetBrains Mono', monospace; }
+  .a { margin-top: 16px; background: #fff; border-left: 10px solid var(--green); padding: 12px 22px; font-size: clamp(18px, 1.7vw, 24px); line-height: 1.4; display: none; }
+  .a b { display: block; font: 800 clamp(26px, 2.6vw, 36px) 'Bricolage Grotesque', sans-serif; color: var(--green); }
+  .card.revealed .a { display: block; }
+  footer { padding: 0 36px 18px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font: 500 14px 'JetBrains Mono'; color: var(--muted); }
+  footer button { font: 700 16px 'Atkinson Hyperlegible'; padding: 10px 18px; border-radius: 8px; border: 2px solid var(--ink); background: #fff; cursor: pointer; }
+  footer button.go { background: var(--blue); color: #fff; border-color: var(--blue); }
+  button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .card { min-width: 0; } @media (max-width: 600px) { .card { padding: 24px 18px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Name that Big-O</h1>
+  <span class="count" id="count"></span>
+</header>
+<div class="bank" id="bank">
+  <!-- One button per possible answer. A card's answer must match a button's text exactly. -->
+  <button type="button">O(1)</button><button type="button">O(log n)</button><button type="button">O(n)</button><button type="button">O(n log n)</button><button type="button">O(n²)</button><button type="button">O(n · m)</button><button type="button">O(2ⁿ)</button>
+  <span class="legend">n = the size of the input · m = the size of a second input · worst case</span>
+</div>
+<div class="stagearea">
+  <div class="card" id="card">
+    <div class="who">Say its time Big-O in chat on "go" · bonus point: its space</div>
+    <div class="q" id="q"></div>
+    <div class="a" id="a"></div>
+  </div>
+</div>
+<footer>
+  <button id="prev">← Back</button><button class="go" id="reveal">Reveal (space)</button><button id="next">Next →</button>
+  <span>← → to move · space to reveal · first 6 cards are the core set · last card is a bonus</span>
+</footer>
+<script>
+  // [code, answer, why]
+  const Q = [
+  [
+    "<span style=\"font:700 clamp(20px,2.2vw,28px) JetBrains Mono,monospace;color:#1b2230;display:inline-block;margin-bottom:6px\">last_item</span><pre style=\"font:500 clamp(16px,1.7vw,23px)/1.35 JetBrains Mono,monospace;background:#1b2230;color:#e9edf5;padding:12px 20px;border-radius:8px;white-space:pre;text-align:left;margin:0;overflow-x:auto;max-width:100%;box-sizing:border-box\">def last_item(items):\n    return items[-1]</pre>",
+    "O(1)",
+    "One direct lookup by index, however long the list is. Space O(1)."
+  ],
+  [
+    "<span style=\"font:700 clamp(20px,2.2vw,28px) JetBrains Mono,monospace;color:#1b2230;display:inline-block;margin-bottom:6px\">total</span><pre style=\"font:500 clamp(16px,1.7vw,23px)/1.35 JetBrains Mono,monospace;background:#1b2230;color:#e9edf5;padding:12px 20px;border-radius:8px;white-space:pre;text-align:left;margin:0;overflow-x:auto;max-width:100%;box-sizing:border-box\">def total(prices):\n    result = 0\n    for price in prices:\n        result += price\n    return result</pre>",
+    "O(n)",
+    "One loop over the input. Space O(1): just one number, <code>result</code>."
+  ],
+  [
+    "<span style=\"font:700 clamp(20px,2.2vw,28px) JetBrains Mono,monospace;color:#1b2230;display:inline-block;margin-bottom:6px\">lowest_and_highest</span><pre style=\"font:500 clamp(16px,1.7vw,23px)/1.35 JetBrains Mono,monospace;background:#1b2230;color:#e9edf5;padding:12px 20px;border-radius:8px;white-space:pre;text-align:left;margin:0;overflow-x:auto;max-width:100%;box-sizing:border-box\">def lowest_and_highest(nums):\n    low = nums[0]\n    for x in nums:\n        low = min(low, x)\n    high = nums[0]\n    for x in nums:\n        high = max(high, x)\n    return low, high</pre>",
+    "O(n)",
+    "Two loops <strong>one after another</strong>: 2n steps. Drop the constant (rule 1). Space O(1)."
+  ],
+  [
+    "<span style=\"font:700 clamp(20px,2.2vw,28px) JetBrains Mono,monospace;color:#1b2230;display:inline-block;margin-bottom:6px\">has_pair_sum</span><pre style=\"font:500 clamp(16px,1.7vw,23px)/1.35 JetBrains Mono,monospace;background:#1b2230;color:#e9edf5;padding:12px 20px;border-radius:8px;white-space:pre;text-align:left;margin:0;overflow-x:auto;max-width:100%;box-sizing:border-box\">def has_pair_sum(nums, goal):\n    for a in nums:\n        for b in nums:\n            if a + b == goal:\n                return True\n    return False</pre>",
+    "O(n²)",
+    "A loop inside a loop over the <strong>same</strong> list. It can stop early, but the worst case checks every pair (rule 4). Space O(1)."
+  ],
+  [
+    "<span style=\"font:700 clamp(20px,2.2vw,28px) JetBrains Mono,monospace;color:#1b2230;display:inline-block;margin-bottom:6px\">halvings</span><pre style=\"font:500 clamp(16px,1.7vw,23px)/1.35 JetBrains Mono,monospace;background:#1b2230;color:#e9edf5;padding:12px 20px;border-radius:8px;white-space:pre;text-align:left;margin:0;overflow-x:auto;max-width:100%;box-sizing:border-box\">def halvings(n):\n    count = 0\n    while n &gt; 1:\n        n = n // 2\n        count += 1\n    return count</pre>",
+    "O(log n)",
+    "n is cut in half every time round: about log₂ n rounds (1,024 → 10). Space O(1)."
+  ],
+  [
+    "<span style=\"font:700 clamp(20px,2.2vw,28px) JetBrains Mono,monospace;color:#1b2230;display:inline-block;margin-bottom:6px\">grade_all</span><pre style=\"font:500 clamp(16px,1.7vw,23px)/1.35 JetBrains Mono,monospace;background:#1b2230;color:#e9edf5;padding:12px 20px;border-radius:8px;white-space:pre;text-align:left;margin:0;overflow-x:auto;max-width:100%;box-sizing:border-box\">def grade_all(students, assignments):\n    for s in students:\n        for a in assignments:\n            print(s, a)</pre>",
+    "O(n · m)",
+    "Two <strong>different</strong> inputs, one loop inside the other: n students × m assignments (rule 3). Space O(1): it prints, it doesn't store."
+  ],
+  [
+    "<span style=\"font:700 clamp(20px,2.2vw,28px) JetBrains Mono,monospace;color:#1b2230;display:inline-block;margin-bottom:6px\">three_cheers</span><pre style=\"font:500 clamp(16px,1.7vw,23px)/1.35 JetBrains Mono,monospace;background:#1b2230;color:#e9edf5;padding:12px 20px;border-radius:8px;white-space:pre;text-align:left;margin:0;overflow-x:auto;max-width:100%;box-sizing:border-box\">def three_cheers(names):\n    for name in names:\n        for k in range(3):\n            print(&quot;Go&quot;, name)</pre>",
+    "O(n)",
+    "The inner loop always runs 3 times, whatever the input: that's O(1) (rule 2). 3n → O(n). Space O(1)."
+  ],
+  [
+    "<span style=\"font:700 clamp(20px,2.2vw,28px) JetBrains Mono,monospace;color:#1b2230;display:inline-block;margin-bottom:6px\">smallest</span><pre style=\"font:500 clamp(16px,1.7vw,23px)/1.35 JetBrains Mono,monospace;background:#1b2230;color:#e9edf5;padding:12px 20px;border-radius:8px;white-space:pre;text-align:left;margin:0;overflow-x:auto;max-width:100%;box-sizing:border-box\">def smallest(nums):\n    ordered = sorted(nums)\n    return ordered[0]</pre>",
+    "O(n log n)",
+    "<code>sorted()</code> is a good sort: O(n log n). Space O(n): it builds a new sorted list. (<code>min(nums)</code> would be O(n) with no sorting.)"
+  ],
+  [
+    "<span style=\"font:700 clamp(20px,2.2vw,28px) JetBrains Mono,monospace;color:#1b2230;display:inline-block;margin-bottom:6px\">count_paths</span><pre style=\"font:500 clamp(16px,1.7vw,23px)/1.35 JetBrains Mono,monospace;background:#1b2230;color:#e9edf5;padding:12px 20px;border-radius:8px;white-space:pre;text-align:left;margin:0;overflow-x:auto;max-width:100%;box-sizing:border-box\">def count_paths(n):\n    if n == 0:\n        return 1\n    return count_paths(n - 1) + count_paths(n - 1)</pre>",
+    "O(2ⁿ)",
+    "Each call makes <strong>two</strong> more calls: 2, 4, 8, … 2ⁿ calls. Space O(n): the call stack only holds one path at a time."
+  ],
+  [
+    "<span style=\"font:700 clamp(20px,2.2vw,28px) JetBrains Mono,monospace;color:#1b2230;display:inline-block;margin-bottom:6px\">Bonus: is_member</span><pre style=\"font:500 clamp(16px,1.7vw,23px)/1.35 JetBrains Mono,monospace;background:#1b2230;color:#e9edf5;padding:12px 20px;border-radius:8px;white-space:pre;text-align:left;margin:0;overflow-x:auto;max-width:100%;box-sizing:border-box\">def is_member(name, members):\n    # members is a list\n    return name in members</pre>",
+    "O(n)",
+    "<code>in</code> on a <strong>list</strong> is a hidden loop: Python checks item by item. On a <strong>set</strong> it would be O(1) (see the Python TimeComplexity page)."
+  ]
+]
+  let i = 0
+  const $ = (s) => document.querySelector(s)
+  const btns = [...document.querySelectorAll('#bank button')]
+  function draw() {
+    $('#card').classList.remove('revealed')
+    $('#q').innerHTML = Q[i][0]
+    $('#a').innerHTML = `<b>${Q[i][1]}</b>${Q[i][2]}`
+    $('#count').textContent = `${i + 1} / ${Q.length}`
+    btns.forEach((s) => s.className = '')
+  }
+  function reveal(picked) {
+    $('#card').classList.add('revealed')
+    btns.forEach((s) => s.className = s.textContent === Q[i][1] ? 'hit' : (s.textContent === picked ? 'miss' : ''))
+  }
+  btns.forEach((b) => b.onclick = () => reveal(b.textContent))
+  const go = (n) => { i = Math.min(Math.max(n, 0), Q.length - 1); draw() }
+  $('#prev').onclick = () => go(i - 1); $('#next').onclick = () => go(i + 1); $('#reveal').onclick = () => reveal()
+  addEventListener('keydown', (e) => {
+    if (e.key === ' ') { e.preventDefault(); reveal() }
+    if (e.key === 'ArrowRight') go(i + 1)
+    if (e.key === 'ArrowLeft') go(i - 1)
+  })
+  draw()
+</script>
+</body>
+</html>
