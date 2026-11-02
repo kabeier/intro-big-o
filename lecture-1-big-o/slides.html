@@ -41,6 +41,7 @@
   <h1>What happens when the list gets big?</h1>
   <p class="sub">Big-O describes how the work (and the memory) <b>grows</b> as the input grows. We count it, live, in Python.</p>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> Today we learn to measure how the work grows as a list gets big, and we count it live in Python.</p>
     <p><b>Before class</b> (demo-kit/RUNBOOK.md): this deck open in <b>Chrome</b> with internet (the editor and Python load once). In your own terminal: <code>python3 --version</code>.</p>
     <p>Press <b>T</b>. Students: open VS Code and a terminal, <code>mkdir big-o</code>, <code>cd big-o</code>, <code>code .</code></p>
     <p><b>The code slides are a real editor.</b> Type live (each slide's notes have <b>TYPE THIS</b>), <b>Ctrl+S</b> saves, then click the terminal and type the command. <b>Backup:</b> <b>N</b> types the next chunk, <b>R</b> runs it.</p>
@@ -55,6 +56,7 @@
   </div>
   <p class="bottomline">Both are correct. Only one still works when the data gets big.</p>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> The hook: finding one number in a million takes a million looks one way, and 20 the other.</p>
     <p>Say: "In the binary search lecture you wrote both of these. Today we put a <b>name</b> on the difference."</p>
     <p>Ask chat: "If the list doubles to 2,000,000, how many looks for each?" → linear <b>2,000,000</b>, binary <b>21</b>. That question is Big-O.</p>
   </aside>
@@ -71,6 +73,7 @@
   </ul>
   <p class="bottomline">The question: "If my input doubles, how much more work?"</p>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> What Big-O measures: growth in work and memory, not seconds.</p>
     <p>Say: "Big-O does not say 3 seconds. A fast laptop and a slow laptop give different seconds. Big-O describes the <b>shape</b>: double the input, what happens to the work?"</p>
     <table style="border-collapse:collapse;margin:8px 0">
       <tr><th style="padding:4px 16px;border-bottom:1px solid #34405a" align="left">input doubles…</th><th style="padding:4px 16px;border-bottom:1px solid #34405a" align="left">work…</th><th style="padding:4px 16px;border-bottom:1px solid #34405a" align="left">Big-O</th></tr>
@@ -86,6 +89,7 @@
   <h2>The Big-O chart: drag n</h2>
   <div id="slide-chart"></div>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> The Big-O chart: drag n and watch each curve grow.</p>
     <p><b>** LIVE, about 2 minutes. **</b> The curriculum's chart, redrawn so you can move it. Drag the slider, or type in the box.</p>
     <ul>
       <li>Start at <b>n = 10</b>: "Everything looks fine at 10."</li>
@@ -116,6 +120,7 @@
     print(n, linear_search(items, n))</script>
   </div>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> We write growth.py: one function that always takes one step, then one that counts its steps as the list grows.</p>
     <p><b>** CODE ALONG, about 5 minutes. **</b> Students: a new file <code>growth.py</code>.</p>
     <div class="typecode"><p class="th">TYPE THIS, in order</p>
     <p class="tf"><b>growth.py</b> · part 1</p>
@@ -159,6 +164,7 @@
     print(n, count_pairs(items))</script>
   </div>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> We write pairs.py: a loop inside a loop, and watch 1,000 items become 1,000,000 steps.</p>
     <p><b>** CODE ALONG, about 3 minutes. **</b> New file <code>pairs.py</code>.</p>
     <div class="typecode"><p class="th">TYPE THIS, in order</p>
     <p class="tf"><b>pairs.py</b> · part 1</p>
@@ -203,6 +209,7 @@
     print(n, binary_search(items, n))</script>
   </div>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> We write halving.py: binary search with a step counter, and watch the count barely move.</p>
     <p><b>** CODE ALONG, about 3 minutes. **</b> New file <code>halving.py</code>. The binary search from the binary search lecture, plus a counter.</p>
     <div class="typecode"><p class="th">TYPE THIS, in order</p>
     <p class="tf"><b>halving.py</b> · part 1</p>
@@ -246,6 +253,7 @@
   </div>
   <p class="bottomline">A thousand times more data adds only about 10 steps.</p>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> What log n really means: how many times you can cut n in half.</p>
     <p>Say: "A logarithm answers one question: how many times can I cut this in half before I reach 1?"</p>
     <p>That's why our <code>halving.py</code> said 10 for 1,000 and 20 for a million. It also shows up in <b>space</b>: a recursive function that halves each time stacks about log n calls.</p>
   </aside>
@@ -266,6 +274,7 @@ for x in items: ...</pre><p>2n steps → <b>O(n)</b></p></div>
   </div>
   <p class="bottomline">Loops one after another add. Loops inside loops multiply.</p>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> Four rules for reading Big-O straight from code.</p>
     <p><b>About 3 minutes.</b> These four come up in the homework snippets.</p>
     <table style="border-collapse:collapse;margin:8px 0">
       <tr><th style="padding:4px 16px;border-bottom:1px solid #34405a" align="left">rule</th><th style="padding:4px 16px;border-bottom:1px solid #34405a" align="left">say</th></tr>
@@ -297,6 +306,7 @@ for x in items: ...</pre><p>2n steps → <b>O(n)</b></p></div>
   </ul>
   <p class="bottomline">Time and space are two separate answers. They often differ.</p>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> Space: two functions with the same loop, but very different memory.</p>
     <p>Say: "Both loop once, so both are O(n) time. Only the right one builds a list as big as the input."</p>
     <p>Our <code>count_pairs</code> was O(n²) time but O(1) space: it only kept a counter. If it <b>stored</b> every pair in a list, space would be O(n²) too.</p>
   </aside>
@@ -324,6 +334,7 @@ def fib(n):
     print(n, math.factorial(n))</script>
   </div>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> We write branching.py: count the calls in recursive Fibonacci, then see how fast factorial grows.</p>
     <p><b>** CODE ALONG, about 4 minutes. **</b> New file <code>branching.py</code>.</p>
     <div class="typecode"><p class="th">TYPE THIS, in order</p>
     <p class="tf"><b>branching.py</b> · part 1</p>
@@ -372,6 +383,7 @@ def fib(n):
     <tr><td>Every ordering of the items</td><td class="pk">O(n!)</td><td>O(n!) if stored</td></tr>
   </table>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> A cheat sheet of what to look for in code.</p>
     <p>Don't read it out. Say: "This is on the class site and in the curriculum. You'll use it for the activity right now."</p>
   </aside>
 </section>
@@ -387,6 +399,7 @@ def fib(n):
   </ol>
   <p class="muted small" style="margin-top:24px">Page: activity-name-that-big-o/</p>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> Activity: a Python function appears, and everyone names its Big-O in the chat.</p>
     <p>About 40 seconds a card; the first 6 are the core set. Space reveals. Every answer's "why" says the space too.</p>
     <p>Cards 3 and 7 are rules 1 and 2 (drop constants, fixed loop). Card 10: <code>in</code> on a <b>list</b> hides a loop.</p>
   </aside>
@@ -411,6 +424,7 @@ def fib(n):
     </div>
   </div>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> Where to look up the rest: the Python docs list the Big-O of every operation.</p>
     <p><b>About 1 minute.</b> Show, don't read: on <b>TimeComplexity</b>, scroll to <b>list</b> and point at <code>x in s</code> → O(n). Scroll to <b>set</b>: <code>x in s</code> → O(1). "That's why we use a set when we look things up a lot."</p>
     <p>Click <b>Big-O cheat sheet</b>: "the chart we dragged, and the Big-O of common data structures. We'll fill in more of it in future DS lectures."</p>
     <p>Say: "Nobody memorizes this. Look it up."</p>
@@ -430,6 +444,7 @@ def fib(n):
     <p class="small">"O(n) because there is one loop over the input." Name the loop, the halving, or the nesting that gives the answer.</p>
   </div>
   <aside class="notes">
+    <p class="plan"><b>The plan:</b> Walk through the homework, top to bottom.</p>
     <p>Full steps on the class site (Homework): fork → clone → fill in <code>answers.md</code> → commit and push. <code>explanations.md</code> in the repo has worked examples.</p>
   </aside>
 </section>
